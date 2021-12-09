@@ -9,7 +9,7 @@ steps:
       - name: secrets
         path: /secrets
 
-  - name: gcr.io/${_PROJECT:}/gcloud-terraform:latest
+  - name: gcr.io/${_PROJECT}/gcloud-terraform:latest
     id: 'terraform_deploy'
     entrypoint: /bin/bash
     args:
