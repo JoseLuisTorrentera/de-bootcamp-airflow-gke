@@ -15,7 +15,7 @@ steps:
     args:
       - -exc
       - |
-        cd week-01/build_your_own_infrastructure/gcp/provision/terraform
+        cd provision
         mkdir credentials
         cp /secrets/gcp-credentials credentials/account.json
         terraform init
