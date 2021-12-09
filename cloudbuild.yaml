@@ -25,8 +25,8 @@ steps:
         path: /secrets
 
 substitutions:
-  _ACTION: "plan"
-  _BUCKET_ID: "apply -auto-approve"
+  _ACTION: "apply -auto-approve"
+  _BUCKET_ID: "airflow-cloud_keys"
   _ENV: "dev"
   _PROJECT: "airflow-cloud"
 
