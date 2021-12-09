@@ -19,7 +19,7 @@ steps:
         mkdir credentials
         cp /secrets/gcp-credentials credentials/account.json
         terraform init
-        terraform $_ACTION -var-file=./vars/env.$_ENV.auto.tfvars
+        terraform $_ACTION -var-file=terraform.tfvars
     volumes:
       - name: secrets
         path: /secrets
