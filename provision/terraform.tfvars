@@ -3,7 +3,7 @@ region     = "us-central1"
 location     = "us-central1-a"
 
 #Service Account
-name = "airflow"
+#name = "airflow"
 
 #GKE
 gke_num_nodes = 2
