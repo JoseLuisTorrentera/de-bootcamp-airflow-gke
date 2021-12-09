@@ -1,4 +1,4 @@
-project_id = "terraform-bootcamp-de-875dcf76"
+project_id = "airflow-cloud"
 region     = "us-central1"
 location     = "us-central1-a"
 
