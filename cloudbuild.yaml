@@ -23,12 +23,45 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
+  
+  - name: gcr.io/cloud-builders/kubectl
+    id: Set namespaces
+    entrypoint: /bin/bash
+    args:
+      - '-c'
+      - |
+        cd provision
+        kubectl create namespace nfs
+        kubectl -n nfs apply -f nfs/nfs-server.yaml
+        kubectl create namespace storage
+        kubectl create namespace airflow
+        export NFS_SERVER=$(kubectl -n nfs get service/nfs-server -o jsonpath="{.spec.clusterIP}")
+        echo $NFS_SERVER > /workspace/nfs_server.txt
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}
+      - CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
+  
+  - name: gcr.io/${_PROJECT}/helm
+    id: Install charts
+    entrypoint: /bin/bash
+    args:
+      - '-c'
+      - |
+        cd kubernetes
+        helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+        export NFS_SERVER=$(cat /workspace/nfs_server.txt)
+        helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --namespace storage --set nfs.server=$NFS_SERVER --set nfs.path=/
+        helm repo add apache-airflow https://airflow.apache.org
+        helm install airflow -f airflow-values.yaml apache-airflow/airflow --namespace airflow
+
 
 substitutions:
   _ACTION: "apply -auto-approve"
   _BUCKET_ID: "airflow-cloud_keys"
   _ENV: "dev"
   _PROJECT: "airflow-cloud"
+  _CLOUDSDK_COMPUTE_ZONE: "us-central1"
+  _CLOUDSDK_CONTAINER_CLUSTER: "airflow-gke-data-bootcamp"
 
 options:
   substitution_option: 'ALLOW_LOOSE'
