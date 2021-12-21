@@ -35,8 +35,7 @@ steps:
         kubectl -n nfs apply -f nfs/nfs-server.yaml
         kubectl create namespace storage
         kubectl create namespace airflow
-        export NFS_SERVER=$(kubectl -n nfs get service/nfs-server -o jsonpath="{.spec.clusterIP}")
-        echo $NFS_SERVER > /workspace/nfs_server.txt
+        $(kubectl -n nfs get service/nfs-server -o jsonpath="{.spec.clusterIP}") > /workspace/nfs_server.txt
     env:
       - CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}
       - CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
@@ -49,8 +48,7 @@ steps:
       - |
         cd kubernetes
         helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
-        export NFS_SERVER=$(cat /workspace/nfs_server.txt)
-        helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --namespace storage --set nfs.server=$NFS_SERVER --set nfs.path=/
+        helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --namespace storage --set nfs.server=$(cat /workspace/nfs_server.txt) --set nfs.path=/
         helm repo add apache-airflow https://airflow.apache.org
         helm install airflow -f airflow-values.yaml apache-airflow/airflow --namespace airflow
 
