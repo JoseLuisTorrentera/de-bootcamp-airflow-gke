@@ -10,7 +10,7 @@ gke_num_nodes = 2
 machine_type  = "n1-standard-1"
 
 #CloudSQL
-instance_name     = "data-bootcamp-1"
+instance_name     = "data-bootcamp-db"
 database_version  = "POSTGRES_12"
 instance_tier     = "db-f1-micro"
 disk_space        = 10
