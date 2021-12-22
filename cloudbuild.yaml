@@ -41,7 +41,7 @@ steps:
         kubectl -n nfs apply -f nfs/nfs-server.yaml
         kubectl create namespace storage
         kubectl create namespace airflow
-        $(kubectl -n nfs get service/nfs-server -o jsonpath="{.spec.clusterIP}") > /workspace/nfs_server.txt
+        echo $(kubectl -n nfs get service/nfs-server -o jsonpath="{.spec.clusterIP}") > /workspace/nfs_server.txt
     env:
       - CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}
       - CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
