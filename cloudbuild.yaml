@@ -20,9 +20,12 @@ steps:
         cp /secrets/gcp-credentials credentials/account.json
         terraform init
         terraform $_ACTION -var-file=terraform.tfvars
+        gcloud container clusters get-credentials $(terraform output -raw kubernetes_cluster_name) --region $(terraform output -raw location)
     volumes:
       - name: secrets
         path: /secrets
+      - name: kube
+        path: /.kube
   
   - name: gcr.io/cloud-builders/kubectl
     id: Set namespaces
