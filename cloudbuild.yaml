@@ -54,9 +54,9 @@ steps:
       - |
         cd kubernetes
         helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
-        helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --namespace storage --set nfs.server=$(cat /workspace/nfs_server.txt) --set nfs.path=/
+        helm upgrade --install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --namespace storage --set nfs.server=$(cat /workspace/nfs_server.txt) --set nfs.path=/ 
         helm repo add apache-airflow https://airflow.apache.org
-        helm install airflow -f airflow-values.yaml apache-airflow/airflow --namespace airflow
+        helm upgrade --install airflow -f airflow-values.yaml apache-airflow/airflow --namespace airflow 
     volumes:
       - name: secrets
         path: /secrets
