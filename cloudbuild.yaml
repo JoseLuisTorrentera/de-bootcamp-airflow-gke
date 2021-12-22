@@ -8,6 +8,8 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
+      - name: kube
+        path: /.kube
 
   - name: gcr.io/${_PROJECT}/gcloud-terraform:latest
     id: 'terraform_deploy'
@@ -21,15 +23,35 @@ steps:
         terraform init
         terraform $_ACTION -var-file=terraform.tfvars
         gcloud container clusters get-credentials $(terraform output -raw kubernetes_cluster_name) --region $(terraform output -raw location)
+    volumes:
+      - name: secrets
+        path: /secrets
+      - name: kube
+        path: /.kube
+  
+  - name: gcr.io/cloud-builders/kubectl
+    id: Set namespaces
+    entrypoint: /bin/bash
+    args:
+      - '-c'
+      - |
+        gcloud container clusters get-credentials ${_CLOUDSDK_CONTAINER_CLUSTER} --region ${_CLOUDSDK_COMPUTE_ZONE}
+        cd provision
         kubectl create namespace nfs
         kubectl -n nfs apply -f nfs/nfs-server.yaml
         kubectl create namespace storage
         kubectl create namespace airflow
         $(kubectl -n nfs get service/nfs-server -o jsonpath="{.spec.clusterIP}") > /workspace/nfs_server.txt
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}
+      - CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
+
     volumes:
       - name: secrets
         path: /secrets
-    
+      - name: kube
+        path: /.kube
+  
   - name: gcr.io/${_PROJECT}/helm
     id: Install charts
     entrypoint: /bin/bash
@@ -44,8 +66,8 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
-    env:
-      - KUBECONFIG=/workspace/.kube/config
+      - name: kube
+        path: /.kube
 
 
 substitutions:
