@@ -8,8 +8,6 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
-      - name: kube
-        path: /.kube
 
   - name: gcr.io/${_PROJECT}/gcloud-terraform:latest
     id: 'terraform_deploy'
@@ -26,8 +24,6 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
-      - name: kube
-        path: /.kube
   
   - name: gcr.io/cloud-builders/kubectl
     id: Set namespaces
@@ -49,8 +45,6 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
-      - name: kube
-        path: /.kube
   
   - name: gcr.io/${_PROJECT}/helm
     id: Install charts
@@ -66,8 +60,6 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
-      - name: kube
-        path: /.kube
 
 
 substitutions:
