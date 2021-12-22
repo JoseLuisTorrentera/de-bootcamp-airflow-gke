@@ -8,6 +8,8 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
+      - name: kube
+        path: /.kube
 
   - name: gcr.io/${_PROJECT}/gcloud-terraform:latest
     id: 'terraform_deploy'
@@ -42,6 +44,11 @@ steps:
     env:
       - CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}
       - CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
+    volumes:
+      - name: secrets
+        path: /secrets
+      - name: kube
+        path: /.kube
   
   - name: gcr.io/${_PROJECT}/helm
     id: Install charts
@@ -54,6 +61,11 @@ steps:
         helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --namespace storage --set nfs.server=$(cat /workspace/nfs_server.txt) --set nfs.path=/
         helm repo add apache-airflow https://airflow.apache.org
         helm install airflow -f airflow-values.yaml apache-airflow/airflow --namespace airflow
+    volumes:
+      - name: secrets
+        path: /secrets
+      - name: kube
+        path: /.kube
 
 
 substitutions:
