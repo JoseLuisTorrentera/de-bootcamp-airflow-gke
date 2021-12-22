@@ -31,3 +31,9 @@ module "cloudsql" {
   db_username       = var.db_username
   db_password       = var.db_password
 }
+
+module "buckets" {
+  source     = "./modules/storage"
+
+  project_id = var.project_id
+}
