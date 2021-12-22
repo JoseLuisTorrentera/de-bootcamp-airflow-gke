@@ -8,8 +8,6 @@ steps:
     volumes:
       - name: secrets
         path: /secrets
-      - name: kube
-        path: /.kube
 
   - name: gcr.io/${_PROJECT}/gcloud-terraform:latest
     id: 'terraform_deploy'
